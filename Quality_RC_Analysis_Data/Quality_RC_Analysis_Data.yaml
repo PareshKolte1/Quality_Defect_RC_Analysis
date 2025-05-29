@@ -1,1 +1,23 @@
-
+schema_version: '2.0'
+metadata:
+  name: laminate-defect-rootcause-training
+spec:
+  inputs:
+    - name: training_data
+      type: uri_file
+      description: CSV file with email_text and department labels
+  outputs:
+    - name: model_output
+      type: uri_folder
+      description: Path to save the trained model
+  image: docker.io/yourdockerhub/laminate-train:latest
+  command: [ "python", "train_model.py" ]
+  args:
+    - "--input"
+    - "{{inputs.training_data}}"
+    - "--output"
+    - "{{outputs.model_output}}"
+  resources:
+    limits:
+      cpu: "2"
+      memory: "4Gi"
