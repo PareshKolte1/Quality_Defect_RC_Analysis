@@ -1,44 +1,59 @@
-apiVersion: argoproj.io/v1alpha1
-kind: WorkflowTemplate
+# workflow.yaml
+# This file defines an inference service for SAP AI Core / AI Launchpad.
+
+apiVersion: ai.sap.com/v1alpha1
+kind: Application
 metadata:
-  name: laminate-rcdata-pipeline
-  annotations:
-    scenarios.ai.sap.com/description: "ingest quality defect root cause analysis data to workflows"
-    scenarios.ai.sap.com/name: "Laminate Quality root cause analysis defect prediction"
-    executables.ai.sap.com/description: "Train with Laminate printing root cause analysis data"
-    executables.ai.sap.com/name: "training0"
-    artifacts.ai.sap.com/laminatedefectdata.kind:  "dataset"
-    artifacts.ai.sap.com/laminatedefectmodel.kind: "model"
-  labels:
-    scenarios.ai.sap.com/id: "Laminate_defect_Rootcause_datalines"
-    ai.sap.com/version: '2.0'
+  name: defect-root-cause-predictor # A unique name for your application
 spec:
-  imagePullSecrets:
-    - name: credstutorialrepo
-  entrypoint: mypipeline
-  arguments:
-    parameters: []
-  templates:
-  - name: mypipeline
-    steps:
-    - - name: mypredictor
-        template: mycodeblock1
-  - name: mycodeblock1
-    inputs:
-      artifacts:
-        - name: rootcauseanalysisdata
-          path: /app/data/
-    outputs:
-      artifacts:
-        - name: rootcausemodel
-          globalName: rootcause_analysis_model
-          path: /app/model/
-          archive:
-            none: 
-              {}
-    container:
-      image: docker.io/pareshkolte/rootcause_analysis
-      command: ["/bin/sh", "-c"]
-      env: []
-      args:
-        - "python /app/src/main.py"
+  scenarioId: defect-analysis # A logical grouping for your AI artifacts
+  executableId: predict-department # A unique ID for this specific prediction executable
+  # schemaId: default-schema # Optional: Can be used to link to input/output schemas defined elsewhere
+  
+  # The graph defines the steps in your workflow.
+  # For inference, it's typically a single 'code' block pointing to your Dockerfile.
+  graph:
+    - name: predict-step # Name of this step in the workflow
+      type: code        # Indicates this step runs custom code from a Docker image
+      parameters:
+        - name: image # This parameter points to your Docker image that will be built
+          type: string
+          # This value will be replaced by SAP AI Core during deployment
+          # after it builds your Dockerfile. For now, it's a placeholder.
+          value: "{{.ai.image_name}}"
+
+  # Define the input for your prediction service.
+  # This corresponds to the 'data' argument in your main.py's predict function.
+  inputs:
+    - name: data # The name of the input
+      type: object # Expects a JSON object (or list of objects for batch)
+      # You can optionally provide a more detailed JSON schema here if needed for validation.
+      # Example schema (uncomment and expand if you need strict validation):
+      # schema:
+      #   type: array
+      #   items:
+      #     type: object
+      #     properties:
+      #       Defect_Type: {type: string}
+      #       Visual_Inspection_Score: {type: number}
+      #       Sentiment_Score_Email: {type: number}
+      #       # ... include all other expected input features from your CSV
+      #     required: ["Defect_Type", "Visual_Inspection_Score", "Sentiment_Score_Email"]
+
+  # Define the output of your prediction service.
+  # This corresponds to the dictionary returned by main.py's predict function.
+  outputs:
+    - name: predictions # The name of the output
+      type: object # Expects a JSON object
+      # Example schema for output (uncomment and expand):
+      # schema:
+      #   type: object
+      #   properties:
+      #     predictions:
+      #       type: array
+      #       items:
+      #         type: string # Or object, depending on complexity of prediction output
+      #   required: ["predictions"]
+
+  # Type of the workflow: 'inference' for prediction services.
+  type: inference
