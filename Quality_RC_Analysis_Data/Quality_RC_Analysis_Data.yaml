@@ -1,23 +1,44 @@
-schema_version: '2.0'
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
 metadata:
-  name: laminate-defect-rootcause-training
+  name: laminate-rcdata-pipeline
+  annotations:
+    scenarios.ai.sap.com/description: "ingest quality defect root cause analysis data to workflows"
+    scenarios.ai.sap.com/name: "Laminate Quality root cause analysis defect prediction"
+    executables.ai.sap.com/description: "Train with Laminate printing root cause analysis data"
+    executables.ai.sap.com/name: "training0"
+    artifacts.ai.sap.com/laminatedefectdata.kind:  "dataset"
+    artifacts.ai.sap.com/laminatedefectmodel.kind: "model"
+  labels:
+    scenarios.ai.sap.com/id: "Laminate_defect_Rootcause_datalines"
+    ai.sap.com/version: '2.0'
 spec:
-  inputs:
-    - name: training_data
-      type: uri_file
-      description: CSV file with email_text and department labels
-  outputs:
-    - name: model_output
-      type: uri_folder
-      description: Path to save the trained model
-  image: docker.io/yourdockerhub/laminate-train:latest
-  command: [ "python", "train_model.py" ]
-  args:
-    - "--input"
-    - "{{inputs.training_data}}"
-    - "--output"
-    - "{{outputs.model_output}}"
-  resources:
-    limits:
-      cpu: "2"
-      memory: "4Gi"
+  imagePullSecrets:
+    - name: credstutorialrepo
+  entrypoint: mypipeline
+  arguments:
+    parameters: []
+  templates:
+  - name: mypipeline
+    steps:
+    - - name: mypredictor
+        template: mycodeblock1
+  - name: mycodeblock1
+    inputs:
+      artifacts:
+        - name: rootcauseanalysisdata
+          path: /app/data/
+    outputs:
+      artifacts:
+        - name: rootcausemodel
+          globalName: rootcause_analysis_model
+          path: /app/model/
+          archive:
+            none: 
+              {}
+    container:
+      image: docker.io/pareshkolte/rootcause_analysis
+      command: ["/bin/sh", "-c"]
+      env: []
+      args:
+        - "python /app/src/main.py"
