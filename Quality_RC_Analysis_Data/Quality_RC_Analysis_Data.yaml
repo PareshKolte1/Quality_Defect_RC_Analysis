@@ -1,16 +1,16 @@
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: laminate-data-pipeline
+  name: RC-data-pipeline
   annotations:
-    scenarios.ai.sap.com/description: "ingest quality defect data to workflows"
-    scenarios.ai.sap.com/name: "Laminate Quality defect prediction"
-    executables.ai.sap.com/description: "Train with Laminate printing machine parameter data"
+    scenarios.ai.sap.com/description: "root cause analysis to predict the department"
+    scenarios.ai.sap.com/name: "Root cause analysis department prediction"
+    executables.ai.sap.com/description: "Root cause analysis for department prediction"
     executables.ai.sap.com/name: "training1"
     artifacts.ai.sap.com/laminatedefectdata.kind:  "dataset"
     artifacts.ai.sap.com/laminatedefectmodel.kind: "model"
   labels:
-    scenarios.ai.sap.com/id: "Laminate_defect_datalines"
+    scenarios.ai.sap.com/id: "RC-data-pipeline"
     ai.sap.com/version: '2.0'
 spec:
   imagePullSecrets:
@@ -27,17 +27,17 @@ spec:
     - name: mycodeblock1
       inputs:
         artifacts:
-          - name: laminatedefectdata
-            path: /app/data/input.csv
+          - name: rootcauseanalysisdata
+            path: /app/data/rootcause_data.csv
       outputs:
         artifacts:
-          - name: laminatedefectmodel
-            globalName: laminate_quality_defect
+          - name: rootcauseanalysismodel
+            globalName: rootcause_department_model
             path: /app/model/
             archive:
               none: {}
       container:
-        image: docker.io/pareshkolte/laminate_defect_train:01
+        image: docker.io/pareshkolte/rootcause_department_prediction:01
         command: ["/bin/sh", "-c"]
         args:
           - "mkdir -p /app/model && python /app/train_model.py --input /app/data/input.csv --output /app/model"
