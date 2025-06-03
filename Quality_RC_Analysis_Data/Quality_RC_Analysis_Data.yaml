@@ -7,8 +7,8 @@ metadata:
     scenarios.ai.sap.com/name: "Root cause analysis department prediction"
     executables.ai.sap.com/description: "Root cause analysis for department prediction"
     executables.ai.sap.com/name: "training1"
-    artifacts.ai.sap.com/laminatedefectdata.kind:  "dataset"
-    artifacts.ai.sap.com/laminatedefectmodel.kind: "model"
+    artifacts.ai.sap.com/rootcauseanalysisdata.kind:  "dataset"
+    artifacts.ai.sap.com/rootcauseanalysismodel.kind: "model"
   labels:
     scenarios.ai.sap.com/id: "rc-data-pipeline"
     ai.sap.com/version: '2.0'
