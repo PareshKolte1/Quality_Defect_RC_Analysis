@@ -3,15 +3,15 @@ kind: WorkflowTemplate
 metadata:
   name: "rc-data-pipeline"
   annotations:
-    scenarios.ai.sap.com/description: "Root cause analysis to predict the department"
+    scenarios.ai.sap.com/description: "root cause analysis to predict the department"
     scenarios.ai.sap.com/name: "Root cause analysis department prediction"
     executables.ai.sap.com/description: "Root cause analysis for department prediction"
     executables.ai.sap.com/name: "training1"
-    artifacts.ai.sap.com/rootcauseanalysisdata.kind: "dataset"
+    artifacts.ai.sap.com/rootcauseanalysisdata.kind:  "dataset"
     artifacts.ai.sap.com/rootcauseanalysismodel.kind: "model"
   labels:
     scenarios.ai.sap.com/id: "rc-data-pipeline"
-    ai.sap.com/version: "2.0"
+    ai.sap.com/version: '2.0'
 spec:
   imagePullSecrets:
     - name: credstutorialrepo
@@ -34,10 +34,8 @@ spec:
           - name: rootcauseanalysismodel
             globalName: rootcause_department_model
             path: /app/model/model.tar.gz
-            archive:
-              none: {}
       container:
         image: docker.io/pareshkolte/rootcause_department_prediction:01
         command: ["/bin/sh", "-c"]
         args:
-          - "mkdir -p /app/model && python /app/src/main.py"
+          - "python /app/src/main.py"
