@@ -31,9 +31,9 @@ spec:
             path: /app/data/rootcause_data.csv
       outputs:
         artifacts:
-          - name: batcharpredictmodel
-            globalName: batch_char_predict_model
-            path: /app/model/models.tar.gz
+          - name: rootcauseanalysismodel
+            globalName: rootcause_department_model
+            path: /app/model/model.tar.gz
             archive:
               none: {}
       container:
