@@ -33,7 +33,7 @@ spec:
         artifacts:
           - name: rootcauseanalysismodel
             globalName: rootcause_department_model
-            path: /app/model/model.tar.gz
+            path: /app/model/model.tar.gz    # This must match exactly
       container:
         image: docker.io/pareshkolte/rootcause_department_prediction:01
         command: ["/bin/sh", "-c"]
