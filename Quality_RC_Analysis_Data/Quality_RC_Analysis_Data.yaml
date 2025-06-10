@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  name: "rc-data-pipeline"
+  name: rc-data-pipeline
   annotations:
     scenarios.ai.sap.com/description: "root cause analysis to predict the department"
     scenarios.ai.sap.com/name: "Root cause analysis department prediction"
@@ -28,7 +28,7 @@ spec:
       inputs:
         artifacts:
           - name: rootcauseanalysisdata
-            path: /app/data/rootcause_data.csv
+            path: /app/data/
       outputs:
         artifacts:
           - name: rootcauseanalysismodel
@@ -37,5 +37,6 @@ spec:
       container:
         image: docker.io/pareshkolte/rootcause_department_prediction:05
         command: ["/bin/sh", "-c"]
+        env: []
         args:
           - "python /app/src/main.py"
