@@ -35,7 +35,7 @@ spec:
             globalName: rootcause_department_model
             path: /app/model/model.tar.gz    # This must match exactly
       container:
-        image: docker.io/pareshkolte/rootcause_department_prediction:02
+        image: docker.io/pareshkolte/rootcause_department_prediction:03
         command: ["/bin/sh", "-c"]
         args:
           - "python /app/src/main.py"
