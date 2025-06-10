@@ -28,7 +28,7 @@ spec:
       inputs:
         artifacts:
           - name: rootcauseanalysisdata
-            path: /app/data/
+            path: /app/data/rootcause_data.csv
       outputs:
         artifacts:
           - name: rootcauseanalysismodel
