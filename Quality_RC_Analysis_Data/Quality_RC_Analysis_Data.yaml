@@ -19,24 +19,26 @@ spec:
   arguments:
     parameters: []
   templates:
-    - name: mypipeline
-      steps:
-        - - name: mytrainer
-            template: mycodeblock1
-
-    - name: mycodeblock1
-      inputs:
-        artifacts:
-          - name: rootcauseanalysisdata
-            path: /app/data/
-      outputs:
-        artifacts:
-          - name: rootcauseanalysismodel
-            globalName: rootcause_department_model
-            path: /app/model/model.tar.gz
-      container:
-        image: docker.io/pareshkolte/rootcause_department_prediction:06  # Ensure updated image
-        command: ["/bin/sh", "-c"]
-        env: []
-        args:
-          - "python /app/src/main.py"
+  - name: mypipeline
+    steps:
+    - - name: mytrainer
+        template: mycodeblock1
+  - name: mycodeblock1
+    inputs:
+      artifacts:
+        - name: rootcauseanalysisdata
+          path: /app/data/
+    outputs:
+      artifacts:
+        - name: rootcauseanalysismodel
+          globalName: rootcause_department_model
+          path: /app/model/model.tar.gz
+          archive:
+            none: 
+              {}
+    container:
+      image: docker.io/pareshkolte/rootcause_department_prediction:06  # Ensure updated image
+      command: ["/bin/sh", "-c"]
+      env: []
+      args:
+        - "python /app/src/main.py"
