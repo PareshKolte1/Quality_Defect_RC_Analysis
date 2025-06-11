@@ -1,0 +1,50 @@
+apiVersion: ai.sap.com/v1alpha1
+kind: ServingTemplate
+metadata:
+  name: rootcause-server
+  annotations:
+    scenarios.ai.sap.com/description: "Predict department from root cause defect data"
+    scenarios.ai.sap.com/name: "Rootcause Department Prediction"
+    executables.ai.sap.com/description: "Inference API for department prediction"
+    executables.ai.sap.com/name: "department-server"
+    artifacts.ai.sap.com/rootcauseanalysismodel.kind: "model"
+  labels:
+    scenarios.ai.sap.com/id: "rootcause-department-analysis"
+    ai.sap.com/version: "1.0"
+spec:
+  inputs:
+    artifacts:
+      - name: rootcauseanalysismodel
+    parameters:
+      - name: greetmessage
+        type: string
+  template:
+    apiVersion: "serving.kserve.io/v1beta1"
+    metadata:
+      annotations: |
+        autoscaling.knative.dev/metric: concurrency
+        autoscaling.knative.dev/target: 1
+        autoscaling.knative.dev/targetBurstCapacity: 0
+      labels: |
+        ai.sap.com/resourcePlan: starter
+    spec: |
+      predictor:
+        imagePullSecrets:
+          - name: credstutorialrepo
+        minReplicas: 1
+        maxReplicas: 5
+        containers:
+          - name: kserve-container
+            image: "docker.io/pareshkolte/rootcause_department_inference:01"
+            ports:
+              - containerPort: 9001
+                protocol: TCP
+            command: ["/bin/sh", "-c"]
+            args:
+              - >
+                set -e && echo "Starting" && gunicorn --chdir /app main:app -b 0.0.0.0:9001
+            env:
+              - name: STORAGE_URI
+                value: "{{inputs.artifacts.rootcauseanalysismodel}}"
+              - name: greetingmessage
+                value: "{{inputs.parameters.greetmessage}}"
